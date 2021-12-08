@@ -4,8 +4,10 @@ ARG BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
 
 # Phase 1 - Build
 FROM $BASE_IMAGE AS compile-image
-#yum --disableplugin=subscription-manager update && \
-RUN yum -y --disableplugin=subscription-manager groupinstall 'Development Tools' && \
+# WARNING root required here to run yum
+USER root
+RUN yum --disableplugin=subscription-manager --disablerepo=* --enablerepo=ubi-8-appstream update  && \
+  yum -y --disableplugin=subscription-manager --disablerepo=* --enablerepo=ubi-8-appstream groupinstall 'Development Tools' && \
   yum --disableplugin=subscription-manager clean all
 
 RUN python3 -m venv /opt/venv
