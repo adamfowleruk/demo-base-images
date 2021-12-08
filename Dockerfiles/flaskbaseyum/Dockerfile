@@ -6,9 +6,9 @@ ARG BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
 FROM $BASE_IMAGE AS compile-image
 # WARNING root required here to run yum
 USER root
-RUN yum --disableplugin=subscription-manager update  && \
+RUN yum -y --disableplugin=subscription-manager update  && \
   yum -y --disableplugin=subscription-manager groupinstall 'Development Tools' && \
-  yum --disableplugin=subscription-manager clean all
+  yum -y --disableplugin=subscription-manager clean all
 
 RUN python3 -m venv /opt/venv
 # Make sure we use the virtualenv:
