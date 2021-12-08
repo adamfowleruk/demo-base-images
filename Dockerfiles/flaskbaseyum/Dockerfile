@@ -7,7 +7,7 @@ FROM $BASE_IMAGE AS compile-image
 # WARNING root required here to run yum
 USER root
 RUN yum -y --disableplugin=subscription-manager update  && \
-  yum -y --disableplugin=subscription-manager groupinstall 'Development Tools' && \
+  yum -y --disableplugin=subscription-manager python3 python3-virtualenv && \
   yum -y --disableplugin=subscription-manager clean all
 
 RUN python3 -m venv /opt/venv
@@ -17,7 +17,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /usr/src/app
 
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
 #COPY setup.py .
 #COPY flask-time-api .
