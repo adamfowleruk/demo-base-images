@@ -6,9 +6,9 @@ ARG BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
 FROM $BASE_IMAGE AS compile-image
 # WARNING root required here to run yum
 USER root
-RUN zypper -y update  && \
-  zypper -y --no-recommends install python3 python3-virtualenv && \
-  zypper -y clean -a
+RUN zypper update -y && \
+  zypper install -y --no-recommends python3 python3-virtualenv && \
+  zypper clean -a
 
 RUN python3 -m venv /opt/venv
 # Make sure we use the virtualenv:
