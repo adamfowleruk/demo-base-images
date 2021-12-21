@@ -9,6 +9,9 @@ ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
 
+ARG MAVEN_VERSION=3.3.9
+ARG USER_HOME_DIR="/root"
+
 ## Runtime args
 # ARG RUN_SPRING_PROFILE=myprofile
 # ARG RUN_PORT=5050
@@ -18,8 +21,28 @@ FROM $BUILDER_BASE_IMAGE as builder
 ## Import global ARG values
 ARG APP_FOLDER
 ARG APP_JAR_FILENAME
+ARG MAVEN_VERSION
+ARG USER_HOME_DIR
 
 ENV BUILD_JAR_FILENAME=$APP_JAR_FILENAME
+
+
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends curl tar bash && \
+  apt-get clean
+# RUN apk add --no-cache curl tar bash
+RUN mkdir -p /usr/share/maven && \
+  curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \
+  ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
+# speed up Maven JVM a bit
+ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+
+
+
 
 WORKDIR /spring-app
 
