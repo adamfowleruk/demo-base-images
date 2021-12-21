@@ -18,8 +18,8 @@ ARG GRADLE_HOME=/opt/gradle
 FROM $BUILDER_BASE_IMAGE as builder
 
 # Default gradle version in the above is v4.0.1 - waaaaay too old!
-ENV GRADLE_HOME $GRADLE_HOME
-ENV GRADLE_VERSION $GRADLE_VERSION
+# ENV GRADLE_HOME $GRADLE_HOME
+# ENV GRADLE_VERSION $GRADLE_VERSION
 
 RUN set -o errexit -o nounset \
   && echo "Downloading Gradle" \
