@@ -15,6 +15,9 @@ ARG APP_JAR_FILENAME=target/*.jar
 
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
+## Import global ARG values
+ARG APP_FOLDER
+ARG APP_JAR_FILENAME
 
 ENV BUILD_JAR_FILENAME=$APP_JAR_FILENAME
 
