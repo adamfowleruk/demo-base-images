@@ -21,14 +21,13 @@ ARG APP_JAR_FILENAME
 
 ENV BUILD_JAR_FILENAME=$APP_JAR_FILENAME
 
-COPY ${APP_FOLDER}/* /spring-app
 WORKDIR /spring-app
-# Value from WORKDIR name overrides the project name if it doesn't match, and thus the final JAR file name!
+
+COPY ${APP_FOLDER}/* .
 
 # EXPOSE 4000
 
 RUN export && pwd && ls -l && ls -l * && \
-  cd /spring-app && \
   ./mvnw verify \
   && mv ${BUILD_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
