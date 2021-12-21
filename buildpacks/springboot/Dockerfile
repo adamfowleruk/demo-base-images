@@ -9,7 +9,7 @@ ARG BUILD_GRADLE_VERSION=6.9
 ARG BUILD_GRADLE_DOWNLOAD_SHA256=765442b8069c6bee2ea70713861c027587591c6b1df2c857a23361512560894e
 ARG BUILD_GRADLE_HOME=/opt/gradle
 ARG APP_FOLDER=.
-ARG APP_JAR_FILENAME=demoapp.jar
+ARG APP_JAR_FILENAME=target/*.jar
 ## Runtime args
 ARG RUN_SPRING_PROFILE=myprofile
 ARG RUN_PORT=5050
@@ -18,10 +18,11 @@ ARG RUN_PORT=5050
 FROM $BUILDER_BASE_IMAGE as builder
 
 # Default gradle version in the above is v4.0.1 - waaaaay too old!
-ENV GRADLE_DOWNLOAD_SHA256 $BUILD_GRADLE_DOWNLOAD_SHA256
-ENV GRADLE_HOME $BUILD_GRADLE_HOME
-ENV GRADLE_VERSION $BUILD_GRADLE_VERSION
-ENV BUILD_JAR_FILENAME $APP_JAR_FILENAME
+# TODO FIX WHY THESE ARGS DO NOT END UP IN THE ENV VARIABLES IN RUN
+ENV GRADLE_DOWNLOAD_SHA256 765442b8069c6bee2ea70713861c027587591c6b1df2c857a23361512560894e
+ENV GRADLE_HOME /opt/gradle
+ENV GRADLE_VERSION 6.9
+ENV BUILD_JAR_FILENAME target/*.jar
 
 RUN set -o errexit -o nounset \
   && echo "Downloading Gradle" \
@@ -50,8 +51,8 @@ WORKDIR /spring-app
 # EXPOSE 4000
 
 RUN ${GRADLE_HOME}/bin/gradle clean assemble \
-  && pwd && ls target \
-  && mv target/${BUILD_JAR_FILENAME} /app.jar
+  && pwd \
+  && mv ${BUILD_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
 # So next we use a second stage to eliminate those temporary files
 
