@@ -12,7 +12,7 @@ ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=demoapp.jar
 ## Runtime args
 ARG RUN_SPRING_PROFILE=myprofile
-ARG PORT=5050
+ARG RUN_PORT=5050
 
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
@@ -62,6 +62,8 @@ FROM $RUNNER_BASE_IMAGE
 COPY --from=builder /app.jar /app.jar
 
 ENV SPRING_PROFILE $RUN_SPRING_PROFILE
+ENV PORT $RUN_PORT
+
 #CMD java -jar -Dspring.profiles.active="in-memory" -Dserver.port=4000 /app.jar
 #CMD java -jar -Dspring.profiles.active="postgres-k8s" -Dserver.port=4000 /app.jar
 CMD java -jar -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
