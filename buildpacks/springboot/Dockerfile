@@ -2,7 +2,8 @@
 ## Buildtime and Image definition args
 # ARG BUILDER_BASE_IMAGE=openjdk:8-jdk
 # ARG RUNNER_BASE_IMAGE=openjdk:8-jdk
-ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-slim-bullseye
+# Note: Slim OpenJDK doesn't include WGET, used to fetch the latest gradle
+ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-bullseye
 ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
 ARG GRADLER_VERSION=6.9
 ARG GRADLE_DOWNLOAD_SHA256=765442b8069c6bee2ea70713861c027587591c6b1df2c857a23361512560894e
