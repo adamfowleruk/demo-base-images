@@ -3,10 +3,12 @@
 # ARG BUILDER_BASE_IMAGE=openjdk:8-jdk
 # ARG RUNNER_BASE_IMAGE=openjdk:8-jdk
 # Note: Slim OpenJDK doesn't include WGET, used to fetch the latest gradle
+
 ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-slim-bullseye
 ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
+
 ## Runtime args
 # ARG RUN_SPRING_PROFILE=myprofile
 # ARG RUN_PORT=5050
@@ -14,7 +16,7 @@ ARG APP_JAR_FILENAME=target/*.jar
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
 
-ENV BUILD_JAR_FILENAME ${APP_JAR_FILENAME}
+ENV BUILD_JAR_FILENAME=$APP_JAR_FILENAME
 
 COPY ${APP_FOLDER}/* /spring-app
 WORKDIR /spring-app
@@ -22,7 +24,7 @@ WORKDIR /spring-app
 
 # EXPOSE 4000
 
-RUN export && pwd && ls && ls * && \
+RUN export && pwd && ls -l && ls -l * && \
   cd /spring-app && \
   ./mvnw verify \
   && mv ${BUILD_JAR_FILENAME} /app.jar
