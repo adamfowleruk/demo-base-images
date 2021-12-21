@@ -22,7 +22,7 @@ WORKDIR /spring-app
 
 # EXPOSE 4000
 
-RUN pwd && \
+RUN pwd && ls && ls * && \
   ./mvnw verify \
   && mv ${BUILD_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
