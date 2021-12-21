@@ -14,9 +14,9 @@ ARG APP_JAR_FILENAME=target/*.jar
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
 
-ENV BUILD_JAR_FILENAME $APP_JAR_FILENAME
+ENV BUILD_JAR_FILENAME ${APP_JAR_FILENAME}
 
-COPY $APP_FOLDER/* /spring-app
+COPY ${APP_FOLDER}/* /spring-app
 WORKDIR /spring-app
 # Value from WORKDIR name overrides the project name if it doesn't match, and thus the final JAR file name!
 
