@@ -5,21 +5,23 @@
 # Note: Slim OpenJDK doesn't include WGET, used to fetch the latest gradle
 ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-bullseye
 ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
-ARG GRADLE_VERSION=6.9
-ARG GRADLE_DOWNLOAD_SHA256=765442b8069c6bee2ea70713861c027587591c6b1df2c857a23361512560894e
+ARG BUILD_GRADLE_VERSION=6.9
+ARG BUILD_GRADLE_DOWNLOAD_SHA256=765442b8069c6bee2ea70713861c027587591c6b1df2c857a23361512560894e
+ARG BUILD_GRADLE_HOME=/opt/gradle
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=demoapp.jar
 ## Runtime args
-ARG SPRING_PROFILE=myprofile
+ARG RUN_SPRING_PROFILE=myprofile
 ARG PORT=5050
-ARG GRADLE_HOME=/opt/gradle
 
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
 
 # Default gradle version in the above is v4.0.1 - waaaaay too old!
-# ENV GRADLE_HOME $GRADLE_HOME
-# ENV GRADLE_VERSION $GRADLE_VERSION
+ENV GRADLE_DOWNLOAD_SHA256 $BUILD_GRADLE_DOWNLOAD_SHA256
+ENV GRADLE_HOME $BUILD_GRADLE_HOME
+ENV GRADLE_VERSION $BUILD_GRADLE_VERSION
+ENV BUILD_JAR_FILENAME $APP_JAR_FILENAME
 
 RUN set -o errexit -o nounset \
   && echo "Downloading Gradle" \
@@ -49,7 +51,7 @@ WORKDIR /spring-app
 
 RUN ${GRADLE_HOME}/bin/gradle clean assemble \
   && pwd && ls target \
-  && mv target/${APP_JAR_FILENAME} /app.jar
+  && mv target/${BUILD_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
 # So next we use a second stage to eliminate those temporary files
 
@@ -59,6 +61,7 @@ FROM $RUNNER_BASE_IMAGE
 
 COPY --from=builder /app.jar /app.jar
 
+ENV SPRING_PROFILE $RUN_SPRING_PROFILE
 #CMD java -jar -Dspring.profiles.active="in-memory" -Dserver.port=4000 /app.jar
 #CMD java -jar -Dspring.profiles.active="postgres-k8s" -Dserver.port=4000 /app.jar
 CMD java -jar -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
