@@ -11,12 +11,13 @@ ARG APP_JAR_FILENAME=demoapp.jar
 ## Runtime args
 ARG SPRING_PROFILE=myprofile
 ARG PORT=5050
+ARG GRADLE_HOME=/opt/gradle
 
 # Stage 1 - build time
 FROM $BUILDER_BASE_IMAGE as builder
 
 # Default gradle version in the above is v4.0.1 - waaaaay too old!
-ENV GRADLE_HOME /opt/gradle
+ENV GRADLE_HOME $GRADLE_HOME
 ENV GRADLE_VERSION $GRADLE_VERSION
 
 RUN set -o errexit -o nounset \
@@ -29,14 +30,15 @@ RUN set -o errexit -o nounset \
   && echo "Installing Gradle" \
   && unzip gradle.zip \
   && rm gradle.zip \
-  && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
-  && ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle \
-  \
-  && echo "Adding gradle user and group" \
-  && groupadd --system --gid 1000 gradle \
-  && useradd --system --gid gradle --uid 1000 --shell /bin/bash --create-home gradle \
-  && mkdir /home/gradle/.gradle \
-  && chown --recursive gradle:gradle /home/gradle
+  && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" 
+  # \
+  # && ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle \
+  # \
+  # && echo "Adding gradle user and group" \
+  # && groupadd --system --gid 1000 gradle \
+  # && useradd --system --gid gradle --uid 1000 --shell /bin/bash --create-home gradle \
+  # && mkdir /home/gradle/.gradle \
+  # && chown --recursive gradle:gradle /home/gradle
 
 COPY $APP_FOLDER/* /spring-app
 WORKDIR /spring-app
@@ -44,7 +46,7 @@ WORKDIR /spring-app
 
 # EXPOSE 4000
 
-RUN gradle clean assemble \
+RUN ${GRADLE_HOME}/bin/gradle clean assemble \
   && pwd && ls target \
   && mv target/${APP_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
