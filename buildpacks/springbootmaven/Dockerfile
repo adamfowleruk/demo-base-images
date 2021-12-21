@@ -28,7 +28,7 @@ COPY ${APP_FOLDER}/* .
 # EXPOSE 4000
 
 RUN export && pwd && ls -l && ls -l * && \
-  ./mvnw verify \
+  mvn verify \
   && mv ${BUILD_JAR_FILENAME} /app.jar
 # The above leaves the source code in place... larger container image size
 # So next we use a second stage to eliminate those temporary files
