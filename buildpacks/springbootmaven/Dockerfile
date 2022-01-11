@@ -41,8 +41,7 @@ WORKDIR /spring-app
 
 COPY ${APP_FOLDER}/* .
 
-RUN mvn verify && \
-  mvn package spring-boot:repackage && \
+RUN mvn package && \
   mv ${APP_JAR_FILENAME} /app.jar
 # Useful debugging tools to include in the above:-
 # export && pwd && ls -l && ls -l * && \
