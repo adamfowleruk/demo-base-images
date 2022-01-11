@@ -11,7 +11,7 @@ ARG BUILD_GRADLE_HOME=/opt/gradle
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
 ## Runtime args
-ARG RUN_SPRING_PROFILE=myprofile
+ARG RUN_SPRING_PROFILE=k8s
 ARG RUN_PORT=5050
 
 # Stage 1 - build time
