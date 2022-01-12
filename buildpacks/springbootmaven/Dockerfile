@@ -48,7 +48,8 @@ COPY ${APP_FOLDER}/* .
 
 RUN mvn clean package spring-boot:repackage && \
   mkdir -p target/dependency && \
-  (cd target/dependency; jar -xf ../*.jar)
+  (cd target/dependency; jar -xf ../*.jar) && \
+  ls -la target/dependency/BOOT-INF
 
 
 
@@ -65,7 +66,7 @@ FROM $RUNNER_BASE_IMAGE
 # COPY --from=builder /app.jar /app.jar
 COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
-COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
+COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes/* /app/
 
 # JDK8 build classloader bug in JDK source code JAR loading workaround shown below
 # CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
