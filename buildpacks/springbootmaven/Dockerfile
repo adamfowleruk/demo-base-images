@@ -43,8 +43,15 @@ WORKDIR /spring-app
 
 COPY ${APP_FOLDER}/* .
 
+# RUN mvn clean package spring-boot:repackage && \
+  # mv ${APP_JAR_FILENAME} /app.jar
+
 RUN mvn clean package spring-boot:repackage && \
-  mv ${APP_JAR_FILENAME} /app.jar
+  mkdir -p target/dependency && \
+  (cd target/dependency; jar -xf ../*.jar)
+
+
+
 # Useful debugging tools to include in the above:-
 # export && pwd && ls -l && ls -l * && \
 #  ls -l && ls -l * && \
@@ -55,7 +62,11 @@ RUN mvn clean package spring-boot:repackage && \
 # Stage 2 - runtime
 FROM $RUNNER_BASE_IMAGE
 
-COPY --from=builder /app.jar /app.jar
+# COPY --from=builder /app.jar /app.jar
+COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
+COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
+COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 
 # JDK8 build classloader bug in JDK source code JAR loading workaround shown below
-CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
+# CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
+CMD java -cp /app:/app/lib/* -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT io.pivotal.pa.rabbitmq.adsbliveprocessor.ADSBLiveProcessorApplication
