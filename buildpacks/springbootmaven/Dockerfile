@@ -1,6 +1,7 @@
 # Args
 ## Buildtime and Image definition args
-ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-slim-bullseye
+# ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-slim-bullseye
+ARG BUILDER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
 # ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
 ARG RUNNER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
 ARG APP_FOLDER=.
