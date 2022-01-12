@@ -45,8 +45,8 @@ COPY ${APP_FOLDER}/* .
 
 # RUN mvn clean package spring-boot:repackage && \
   # mv ${APP_JAR_FILENAME} /app.jar
-
-RUN mvn clean package spring-boot:repackage && \
+#spring-boot:repackage 
+RUN mvn clean package && \
   mkdir -p target/dependency && \
   (cd target/dependency; jar -xf ../*.jar) && \
   ls -la target/dependency/BOOT-INF
