@@ -41,7 +41,7 @@ ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 # Stage 1 - Build the spring boot app
 WORKDIR /spring-app
 
-COPY ${APP_FOLDER}/* .
+COPY ${APP_FOLDER} .
 
 # RUN mvn clean package spring-boot:repackage && \
   # mv ${APP_JAR_FILENAME} /app.jar
@@ -50,10 +50,9 @@ RUN mvn clean package && \
   ls -la && \
   mkdir -p target/dependency && \
   (cd target/dependency; jar -xf ../*.jar) && \
-  cp -R target/classes target/dependency/BOOT-INF/classes && \
   ls -Rla target/dependency && ls -la target
 
-
+#cp -R target/classes target/dependency/BOOT-INF/classes && \
 
 # Useful debugging tools to include in the above:-
 # export && pwd && ls -l && ls -l * && \
@@ -68,7 +67,7 @@ FROM $RUNNER_BASE_IMAGE
 # COPY --from=builder /app.jar /app.jar
 COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
-COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes/* /app/
+COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 
 # JDK8 build classloader bug in JDK source code JAR loading workaround shown below
 # CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
