@@ -49,7 +49,8 @@ COPY ${APP_FOLDER}/* .
 RUN mvn clean package && \
   mkdir -p target/dependency && \
   (cd target/dependency; jar -xf ../*.jar) && \
-  ls -la target/dependency/BOOT-INF
+  cp -R target/classes target/dependency/BOOT-INF/classes && \
+  ls -Rla target/dependency && ls -la target
 
 
 
