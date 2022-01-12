@@ -55,4 +55,5 @@ FROM $RUNNER_BASE_IMAGE
 
 COPY --from=builder /app.jar /app.jar
 
-CMD java -jar -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
+# JDK8 build classloader bug in JDK source code JAR loading workaround shown below
+CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
