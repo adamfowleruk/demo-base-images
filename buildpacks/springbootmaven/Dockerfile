@@ -6,6 +6,7 @@ ARG BUILDER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
 ARG RUNNER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
+ARG RUN_MAIN_CLASS=io.pivotal.pa.rabbitmq.adsbliveprocessor.ADSBLiveProcessorApplication
 
 ARG MAVEN_VERSION=3.3.9
 ARG USER_HOME_DIR="/root"
@@ -36,22 +37,24 @@ ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
 # TODO move the above into a separate springbaseapt docker image
 # TODO Use just the below as the buildpack image, using the springbaseapt image by default
-
+# TODO externalise SPRING jar files into their own layer (maven repo above)
+#      so they are not overridden by the app itself going out to the internet
+#      i.e. have an 'Organisation parent pom' for this type of project
 
 # Stage 1 - Build the spring boot app
 WORKDIR /spring-app
 
 COPY ${APP_FOLDER} .
 
-# RUN mvn clean package spring-boot:repackage && \
-  # mv ${APP_JAR_FILENAME} /app.jar
-#spring-boot:repackage 
-RUN mvn clean package && \
-  ls -la && \
+# WARNING: Assumes POM auto calls "spring-boot:repackage" itself
+# NOTE leaving ls -la in to ensure the app is unpackaged correctly
+RUN ls -la && \
+  mvn clean package && \
   mkdir -p target/dependency && \
-  (cd target/dependency; jar -xf ../*.jar) && \
-  ls -Rla target/dependency && ls -la target
-
+  (cd target/dependency; jar -xf ../*.jar) 
+  
+  # && \
+  # ls -Rla target/dependency && ls -la target
 #cp -R target/classes target/dependency/BOOT-INF/classes && \
 
 # Useful debugging tools to include in the above:-
@@ -63,12 +66,24 @@ RUN mvn clean package && \
 
 # Stage 2 - runtime
 FROM $RUNNER_BASE_IMAGE
+ARG RUN_MAIN_CLASS
+# TODO extract RUN_MAIN_CLASS from META-INF/MANIFEST.MF file's 
+#      Start-Class: <MAIN_CLASS> entry
 
+# Old way - 'far' spring JAR file:-
 # COPY --from=builder /app.jar /app.jar
+
+# New way - layers for dependencies
+# WARNING app first to prevent accidental/malicious overwriting of 
+#         lib or META-INF files
+COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
-COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 
 # JDK8 build classloader bug in JDK source code JAR loading workaround shown below
+# WARNING For some versions of Spring and JDK's JAR classloader, a fat jar
+#         simply does not work. It's also expensive in terms of layers for
+#         container images, so we show here how to unpack and use the raw
+#         app files themselves
 # CMD java -jar -Dsun.misc.URLClassPath.disableJarChecking=true -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT /app.jar
-CMD java -cp /app:/app/lib/* -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT io.pivotal.pa.rabbitmq.adsbliveprocessor.ADSBLiveProcessorApplication
+CMD java -cp /app:/app/lib/* -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT $RUN_MAIN_CLASS
