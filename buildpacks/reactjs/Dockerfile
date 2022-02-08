@@ -28,5 +28,5 @@ RUN pwd && ls -l && ls -la * && yarn build
 # production environment
 FROM $RUN_IMAGE as run
 COPY --from=build /app/build /usr/share/nginx/html
-# EXPOSE 80
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
