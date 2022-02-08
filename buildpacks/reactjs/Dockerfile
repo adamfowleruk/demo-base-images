@@ -23,7 +23,7 @@ COPY ${APP_FOLDER}/package.json ./
 COPY ${APP_FOLDER}/yarn.lock ./
 RUN yarn install --immutable
 COPY ${APP_FOLDER}/ ./
-RUN pwd && ls -l && ls -la * && yarn build && ls build/ && cat /etc/nginx/conf.d/default.conf
+RUN pwd && ls -l && ls -la * && yarn build && ls build/
 
 # production environment
 FROM $RUN_IMAGE as run
