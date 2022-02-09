@@ -50,7 +50,7 @@ COPY ${APP_FOLDER} .
 # WARNING: Assumes POM auto calls "spring-boot:repackage" itself
 # NOTE leaving ls -la in to ensure the app is unpackaged correctly
 RUN ls -la && \
-  mvn clean package && \
+  mvn clean package -Dmaven.test.skip=true && \
   mkdir -p target/dependency && \
   (cd target/dependency; jar -xf ../*.jar) 
 
