@@ -12,6 +12,7 @@ ARG USER_HOME_DIR="/root"
 
 ARG RUN_MAIN_CLASS=com.vmware.myapp.MyApp
 
+
 # Create a Maven Java Spring Boot builder image
 FROM $BUILDER_BASE_IMAGE as builder
 ## Import global ARG values
@@ -82,4 +83,4 @@ COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
 COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 
-CMD java -cp /app:/app/lib/* -Dspring.profiles.active="$SPRING_PROFILE" -Dserver.port=$PORT ${RUN_MAIN_CLASS}
+CMD ["sh", "-c", "java -cp /app:/app/lib/* -Dspring.profiles.active=$SPRING_PROFILE -Dserver.port=$PORT ${RUN_MAIN_CLASS}"]
