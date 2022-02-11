@@ -69,7 +69,8 @@ RUN ls -la && \
 # Stage 2 - runtime
 FROM $RUNNER_BASE_IMAGE as run-image
 ARG RUN_MAIN_CLASS
-
+# CMD doesn't 'see' arg substitution, so copy via an ENV variable
+ENV RUN_MAIN_CLASS $RUN_MAIN_CLASS
 # Old way - 'far' spring JAR file:-
 # COPY --from=builder /app.jar /app.jar
 
@@ -83,4 +84,4 @@ COPY --from=builder /spring-app/target/dependency/BOOT-INF/lib /app/lib
 COPY --from=builder /spring-app/target/dependency/META-INF /app/META-INF
 COPY --from=builder /spring-app/target/dependency/BOOT-INF/classes /app
 
-CMD ["sh", "-c", "java -cp /app:/app/lib/* -Dspring.profiles.active=$SPRING_PROFILE -Dserver.port=$PORT ${RUN_MAIN_CLASS}"]
+CMD ["sh", "-c", "java -cp /app:/app/lib/* -Dspring.profiles.active=$SPRING_PROFILE -Dserver.port=$PORT $RUN_MAIN_CLASS"]
