@@ -1,9 +1,7 @@
 # Args
-## Buildtime and Image definition args
-# ARG BUILDER_BASE_IMAGE=openjdk:8u312-jdk-slim-bullseye
-ARG BUILDER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
-# ARG RUNNER_BASE_IMAGE=openjdk:8u312-jre-slim-bullseye
-ARG RUNNER_BASE_IMAGE=openjdk:11.0.13-jdk-slim-bullseye
+ARG BUILDER_BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
+# OR myorg/myapp:latest if overriding via ARGs in Docker build
+ARG RUNNER_BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
 
@@ -12,8 +10,7 @@ ARG USER_HOME_DIR="/root"
 
 ARG RUN_MAIN_CLASS=com.vmware.myapp.MyApp
 
-
-# Create a Maven Java Spring Boot builder image
+# Phase 1 - Build
 FROM $BUILDER_BASE_IMAGE as builder
 ## Import global ARG values
 ARG APP_FOLDER
@@ -23,10 +20,16 @@ ARG USER_HOME_DIR
 
 
 
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends curl tar bash && \
-  apt-get clean
-# RUN apk add --no-cache curl tar bash
+
+# WARNING root required here to run zypper
+USER root
+RUN zypper update -y && \
+  zypper install -y --no-recommends curl tar bash && \
+  zypper clean -a
+
+
+
+
 RUN mkdir -p /usr/share/maven && \
   curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \
   ln -s /usr/share/maven/bin/mvn /usr/bin/mvn

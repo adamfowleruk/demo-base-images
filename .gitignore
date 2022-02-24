@@ -1,0 +1,6 @@
+# Temporary build files
+/stacks/java-spring/**/target
+/stacks/java-spring/**/build
+
+# Desktop OS patterns
+.DS_Store
