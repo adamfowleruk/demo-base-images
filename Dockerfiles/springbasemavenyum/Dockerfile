@@ -26,6 +26,9 @@ ARG USER_HOME_DIR
 #  yum -y --disableplugin=subscription-manager install curl tar bash && \
 #  yum -y --disableplugin=subscription-manager clean all
 
+# WARNING root required here to access /usr/share/maven
+USER root
+
 # RUN apk add --no-cache curl tar bash
 RUN mkdir -p /usr/share/maven && \
   curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \

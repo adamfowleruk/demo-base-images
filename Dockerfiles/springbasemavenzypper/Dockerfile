@@ -24,7 +24,7 @@ ARG USER_HOME_DIR
 # WARNING root required here to run zypper
 USER root
 RUN zypper update -y && \
-  zypper install -y --no-recommends curl tar bash && \
+  zypper install -y --no-recommends curl tar bash gzip && \
   zypper clean -a
 
 
