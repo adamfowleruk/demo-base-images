@@ -22,6 +22,7 @@ ARG USER_HOME_DIR
 # NOTE UBI8 openjdk-11 et al already contain these tools, and are minimal images without yum (they use microdnf)
 ## WARNING root required here to run yum
 #USER root
+RUN microdnf install gzip which -y && microdnf clean all
 #RUN yum -y --disableplugin=subscription-manager update  && \
 #  yum -y --disableplugin=subscription-manager install curl tar bash && \
 #  yum -y --disableplugin=subscription-manager clean all

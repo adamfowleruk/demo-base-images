@@ -1,7 +1,7 @@
 # Args
-ARG BUILDER_BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
+ARG BUILDER_BASE_IMAGE=registry.suse.com/suse/sle15:15.3.17.8.42
 # OR myorg/myapp:latest if overriding via ARGs in Docker build
-ARG RUNNER_BASE_IMAGE=registry.access.redhat.com/ubi8/python-39
+ARG RUNNER_BASE_IMAGE=registry.suse.com/suse/sle15:15.3.17.8.42
 ARG APP_FOLDER=.
 ARG APP_JAR_FILENAME=target/*.jar
 
@@ -24,7 +24,7 @@ ARG USER_HOME_DIR
 # WARNING root required here to run zypper
 USER root
 RUN zypper update -y && \
-  zypper install -y --no-recommends curl tar bash gzip && \
+  zypper install -y --no-recommends curl tar bash gzip which && \
   zypper clean -a
 
 
