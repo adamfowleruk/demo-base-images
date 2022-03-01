@@ -32,6 +32,7 @@ USER root
 
 # RUN apk add --no-cache curl tar bash
 RUN mkdir -p /usr/share/maven && \
+  rm /usr/bin/mvn && \
   curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \
   ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 # TODO Add SHA256 hash verification to this known maven binary image download
