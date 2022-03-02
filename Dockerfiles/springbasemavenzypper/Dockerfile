@@ -27,8 +27,7 @@ RUN zypper update -y && \
   zypper install -y --no-recommends curl tar bash gzip which && \
   zypper clean -a
 
-
-
+RUN update-alternatives --config javac
 
 RUN mkdir -p /usr/share/maven && \
   curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \
