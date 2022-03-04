@@ -24,16 +24,22 @@ ARG USER_HOME_DIR
 # WARNING root required here to run zypper
 USER root
 RUN zypper update -y && \
-  zypper install -y --no-recommends curl tar bash gzip which && \
+  zypper install -y --no-recommends curl tar bash gzip which java-11-openjdk-devel-11.0.13.0-3.68.1 && \
   zypper clean -a
 
-RUN update-alternatives --config javac
+#RUN update-alternatives --config javac
 
 RUN mkdir -p /usr/share/maven && \
   curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -xzC /usr/share/maven --strip-components=1 && \
-  ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+  ln -s /usr/share/maven/bin/mvn /usr/bin/mvn && \
+  which java
+
 # TODO Add SHA256 hash verification to this known maven binary image download
 ENV MAVEN_HOME /usr/share/maven
+ENV M2_HOME /usr/share/maven
+ENV M2 /usr/share/maven/bin
+ENV M3_HOME /usr/share/maven
+ENV M3 /usr/share/maven/bin
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 # speed up Maven JVM a bit
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"

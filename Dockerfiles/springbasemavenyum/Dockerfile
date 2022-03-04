@@ -37,6 +37,10 @@ RUN mkdir -p /usr/share/maven && \
   ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 # TODO Add SHA256 hash verification to this known maven binary image download
 ENV MAVEN_HOME /usr/share/maven
+ENV M2_HOME /usr/share/maven
+ENV M2 /usr/share/maven/bin
+ENV M3_HOME /usr/share/maven
+ENV M3 /usr/share/maven/bin
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 # speed up Maven JVM a bit
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
