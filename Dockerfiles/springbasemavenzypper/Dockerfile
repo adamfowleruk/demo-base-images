@@ -24,7 +24,7 @@ ARG USER_HOME_DIR
 # WARNING root required here to run zypper
 USER root
 RUN zypper update -y && \
-  zypper install -y --no-recommends curl tar bash gzip which java-11-openjdk-devel-11.0.13.0-3.68.1 && \
+  zypper install -y --no-recommends curl tar bash gzip which java-11-openjdk-devel && \
   zypper clean -a
 
 #RUN update-alternatives --config javac
