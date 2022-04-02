@@ -80,7 +80,9 @@ RUN \
 
 # Now use imgpkg to fetch the desired package of kapp-controller
 RUN \
+  mkdir -p ./tmp/tanzu-cluster-essentials && \
   tar -xvf ./tmp/essentials.tgz -C ./tmp/tanzu-cluster-essentials && \
+  ls -la ./tmp/tanzu-cluster-essentials && \
   cp ./tmp/tanzu-cluster-essentials/kapp /usr/local/bin/kapp && \
   cp ./tmp/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg && \
   chmod +x /usr/local/bin/imgpkg && \
