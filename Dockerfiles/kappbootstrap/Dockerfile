@@ -11,12 +11,11 @@ ARG PIVNET_CLI_SHA256=7ade3877a7e973227c58cac6ae3a51ad788130387c166463691fe08f37
 ARG CLUSTER_ESSENTIALS_VERSION=1.0.0
 ARG CLUSTER_ESSENTIALS_FILEID=1105818
 ARG CLUSTER_ESSENTIALS_SHA256=24613086760d5566f33e94307c0de5871c70d65f5ecf3b73afd522b7fd0dd1de
-# ARG CLUSTER_ESSENTIALS_BUNDLE_SHA256=82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
+ARG CLUSTER_ESSENTIALS_BUNDLE=registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
+ARG TANZUNET_HOSTNAME=registry.tanzu.vmware.com
 ARG TANZUNET_USERNAME=
 ARG TANZUNET_PASSWORD=
 ARG PIVNET_TOKEN=
-ARG ESSENTIALS_REGISTRY_HOSTNAME=registry.tanzu.vmware.com
-ARG ESSENTIALS_BUNDLE=registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
 
 # Phase 0 - Fetch and install CLI and imgpkg files for kapp-controller
 FROM $BUILD_IMAGE AS build
@@ -31,20 +30,20 @@ ARG PIVNET_CLI_SHA256
 ARG CLUSTER_ESSENTIALS_VERSION
 ARG CLUSTER_ESSENTIALS_FILEID
 ARG CLUSTER_ESSENTIALS_SHA256
-# ARG CLUSTER_ESSENTIALS_BUNDLE_SHA256
+ARG CLUSTER_ESSENTIALS_REGISTRY_HOSTNAME
+ARG CLUSTER_ESSENTIALS_BUNDLE
 ARG TANZUNET_USERNAME
 ARG TANZUNET_PASSWORD
 ARG PIVNET_TOKEN
-ARG ESSENTIALS_REGISTRY_HOSTNAME
-ARG ESSENTIALS_BUNDLE
 
 ENV PIVNET_TOKEN $PIVNET_TOKEN
 # ENV vars for the cluster essentials install.sh 
 #     (really, our fetch-online.sh version)
-ENV INSTALL_BUNDLE $ESSENTIALS_BUNDLE
-ENV INSTALL_REGISTRY_HOSTNAME $ESSENTIALS_REGISTRY_HOSTNAME
+ENV INSTALL_BUNDLE $CLUSTER_ESSENTIALS_BUNDLE
+ENV INSTALL_REGISTRY_HOSTNAME $TANZUNET_HOSTNAME
 ENV INSTALL_REGISTRY_USERNAME $TANZUNET_USERNAME
 ENV INSTALL_REGISTRY_PASSWORD $TANZUNET_PASSWORD
+# Note: The above ARE NOT FOR YOUR OWN SYSTEMS - They are TanzuNet
 
 COPY Dockerfiles/kappbootstrap/fetch-online.sh .
 
@@ -104,10 +103,15 @@ RUN \
   chmod +x /usr/local/bin/ytt && \
   chmod +x fetch-online.sh && \
   # Do equivalent of online parts of install.sh BUT ONLY TO DOWNLOAD PACKAGES NOT TO INSTALL THEM
-  ./fetch-online.sh && \
-  ls -la bundle
+  ./fetch-online.sh
 
 FROM $RUN_IMAGE as run
+# WARNING at container runtime you MUST provide these details:-
+# ENV INSTALL_REGISTRY_HOSTNAME
+# ENV INSTALL_REGISTRY_USERNAME
+# ENV INSTALL_REGISTRY_PASSWORD
+# DO NOT HARDCODE THEM HERE
+
 # Copy over relevant TAR paths and CLI from the base image
 COPY --from=build /usr/local/bin/imgpkg /usr/local/bin/imgpkg
 COPY --from=build /usr/local/bin/kbld /usr/local/bin/kbld
@@ -119,5 +123,5 @@ COPY --from=build /bundle .
 # Copy external install script
 COPY Dockerfiles/kappbootstrap/install-offline.sh .
 
-# TODO The following script needs completing!
+# Perform the install when this container is instantiated
 CMD ["sh", "-c", "install-offline.sh"]
