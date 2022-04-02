@@ -95,16 +95,17 @@ RUN \
   mkdir -p ./tmp/tanzu-cluster-essentials && \
   tar -xvf ./tmp/essentials.tgz -C ./tmp/tanzu-cluster-essentials && \
   cp ./tmp/tanzu-cluster-essentials/kapp /usr/local/bin/kapp && \
+  cp ./tmp/tanzu-cluster-essentials/kbld /usr/local/bin/kbld && \
   cp ./tmp/tanzu-cluster-essentials/ytt /usr/local/bin/ytt && \
   cp ./tmp/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg && \
   chmod +x /usr/local/bin/imgpkg && \
   chmod +x /usr/local/bin/kapp && \
+  chmod +x /usr/local/bin/kbld && \
   chmod +x /usr/local/bin/ytt && \
-  ls -la ./tmp/tanzu-cluster-essentials && \
-  pwd && \
   chmod +x fetch-online.sh && \
   # Do equivalent of online parts of install.sh BUT ONLY TO DOWNLOAD PACKAGES NOT TO INSTALL THEM
-  ./fetch-online.sh
+  ./fetch-online.sh && \
+  ls -la bundle
 
 FROM $RUN_IMAGE as run
 # Copy over relevant TAR paths and CLI from the base image
@@ -113,6 +114,7 @@ COPY --from=build /usr/local/bin/kbld /usr/local/bin/kbld
 COPY --from=build /usr/local/bin/kapp /usr/local/bin/kapp
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=build /usr/local/bin/ytt /usr/local/bin/ytt
+COPY --from=build /bundle .
 
 # Copy external install script
 COPY Dockerfiles/kappbootstrap/install-offline.sh .
