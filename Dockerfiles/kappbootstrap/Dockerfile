@@ -90,7 +90,7 @@ COPY --from=build /usr/local/bin/kbld /usr/local/bin/kbld
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 
 # Copy external install script
-COPY ./install-offline.sh .
+COPY Dockerfiles/kappbootstrap/install-offline.sh .
 
 # TODO The following script needs completing!
 CMD ["sh", "-c", "install-offline.sh"]
