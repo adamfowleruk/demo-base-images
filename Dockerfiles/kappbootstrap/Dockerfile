@@ -33,7 +33,7 @@ ARG TANZUNET_USERNAME
 ARG TANZUNET_PASSWORD
 
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends curl && \
+  apt-get install -y --no-install-recommends ca-certificates curl && \
   apt-get clean
 
 # Download and verify before continuing
