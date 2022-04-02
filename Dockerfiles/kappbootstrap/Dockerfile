@@ -79,7 +79,7 @@ RUN \
 # Unpack cluster essentials and use it to fetch the required packages
 
 # Now use imgpkg to fetch the desired package of kapp-controller
-RUN imgpkg \
+RUN imgpkg && \
   tar -xvf ./tmp/essentials.tgz -C ./tmp/tanzu-cluster-essentials && \
   cp ./tmp/tanzu-cluster-essentials/kapp /usr/local/bin/kapp && \
   cp ./tmp/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg && \
