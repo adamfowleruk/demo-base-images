@@ -1,4 +1,8 @@
 fileignoreconfig:
 - filename: Dockerfiles/kappbootstrap/Dockerfile
-  checksum: 26f28990cc75bbf095aa6ba090f2f453f8228ab1b5f52893a7632269b60bba4d
+  checksum: 01a8295013457942cce7a7b21c3f0a88effd6c7cc3b2dca7996b56f4db7bcd6d
+- filename: Dockerfiles/kappbootstrap/install-offline.sh
+  checksum: aa0408c49bdd2f52119f9c20fbd546482db57ff08abe24ad49cec91692e901ee
+- filename: Dockerfiles/kappbootstrap/fetch-online.sh
+  checksum: a2893a2db43614e3ecd824ef916778edb9d6441ca5f96ca5793036c6fcca1c1c
 version: ""
