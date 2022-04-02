@@ -17,3 +17,4 @@ export IMGPKG_REGISTRY_HOSTNAME_0=$INSTALL_REGISTRY_HOSTNAME
 export IMGPKG_REGISTRY_USERNAME_0=$INSTALL_REGISTRY_USERNAME
 export IMGPKG_REGISTRY_PASSWORD_0=$INSTALL_REGISTRY_PASSWORD
 imgpkg pull -b $INSTALL_BUNDLE -o ./bundle/
+imgpkg copy --lock ./bundle/.imgpkg/images.yml --to-tar cebundle.tar

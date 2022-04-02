@@ -8,6 +8,17 @@ ns_name=tanzu-cluster-essentials
 echo "## Creating namespace $ns_name"
 kubectl create ns $ns_name 2>/dev/null || true
 
+[ -z "$INSTALL_REGISTRY_HOSTNAME" ] && { echo "INSTALL_REGISTRY_HOSTNAME env var must not be empty"; exit 1; }
+[ -z "$INSTALL_REGISTRY_USERNAME" ] && { echo "INSTALL_REGISTRY_USERNAME env var must not be empty"; exit 1; }
+[ -z "$INSTALL_REGISTRY_PASSWORD" ] && { echo "INSTALL_REGISTRY_PASSWORD env var must not be empty"; exit 1; }
+
+export IMGPKG_REGISTRY_HOSTNAME_0=$INSTALL_REGISTRY_HOSTNAME
+export IMGPKG_REGISTRY_USERNAME_0=$INSTALL_REGISTRY_USERNAME
+export IMGPKG_REGISTRY_PASSWORD_0=$INSTALL_REGISTRY_PASSWORD
+imgpkg copy --tar ./cebundle.tar --to-repo $INSTALL_REGISTRY_HOSTNAME
+
+# TODO rewrite images.yml here with location of the new server (if needed?)
+
 export YTT_registry__server=$INSTALL_REGISTRY_HOSTNAME
 export YTT_registry__username=$INSTALL_REGISTRY_USERNAME
 export YTT_registry__password=$INSTALL_REGISTRY_PASSWORD

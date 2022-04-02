@@ -1,0 +1,67 @@
+# create secret FIRST with:
+# kubectl create secret generic my-k8s-admin-secret -n install-tanzu-cluster-essentials --from-literal=username=supersecret --from-literal=password=topsecret
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: install-essentials
+  namespace: install-tanzu-cluster-essentials
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: modify-pods
+  namespace: install-tanzu-cluster-essentials
+rules:
+  # TODO validate the below required
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: modify-pods-to-sa
+  namespace: install-tanzu-cluster-essentials
+subjects:
+  - kind: ServiceAccount
+    name: install-essentials
+roleRef:
+  kind: Role
+  name: modify-pods
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: install-tanzu-cluster-essentials
+  namespace: install-tanzu-cluster-essentials
+spec:
+  template:
+    spec:
+      serviceAccountName: install-essentials
+      containers:
+      - name: install-tanzu-cluster-essentials
+        # EDIT THE BELOW FOR YOUR ENV
+        image: your.harbor.registry/projectname/image:v1
+        imagePullPolicy: Always
+        env:
+        - name: INSTALL_REGISTRY_HOSTNAME
+          # EDIT THE BELOW FOR YOUR ENV
+          value: "harbor.shared.12factor.xyz"
+        - name: INSTALL_REGISTRY_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: my-k8s-admin-secret
+              key: username
+        - name: INSTALL_REGISTRY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-k8s-admin-secret
+              key: password
+      restartPolicy: Never
+  backoffLimit: 4

@@ -20,3 +20,11 @@ will need to accept EULA from Tanzu Net.
 
 Note from the above that this container itself shouldn't need root permissions.
 
+## Status
+
+- 02 Apr 2022 - Base image building with all tools and bundle included.
+  NOTE: Bundle DOES NOT include the two container images required, just the config
+  and a pointer to them in ./bundle/.imgpkg/images.yml
+- Have downloaded them to ./cebundle.tar using imgpkg copy
+- Need to upload them to target container registry
+- BUT also need to rewrite the images.yml above so they are located now in the correct place

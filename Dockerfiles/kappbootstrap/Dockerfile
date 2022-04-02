@@ -119,6 +119,7 @@ COPY --from=build /usr/local/bin/kapp /usr/local/bin/kapp
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=build /usr/local/bin/ytt /usr/local/bin/ytt
 COPY --from=build /bundle .
+COPY --from=build /cebundle.tar .
 
 # Copy external install script
 COPY Dockerfiles/kappbootstrap/install-offline.sh .
