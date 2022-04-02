@@ -35,7 +35,7 @@ ARG TANZUNET_PASSWORD
 # Download and verify before continuing
 # For KUBECTL find stable version here: https://dl.k8s.io/release/stable.txt 
 #   and its SHA here: https://dl.k8s.io/v1.23.4/bin/linux/amd64/kubectl.sha256
-RUN mkdir tmp && \
+RUN mkdir -p tmp && \
   #curl -L "https://github.com/vmware-tanzu/carvel-imgpkg/releases/download/v${IMGPKG_VERSION}/imgpkg-linux-amd64" -o ./tmp/imgpkg && \
   #echo "${IMGPKG_SHA256} ./tmp/imgpkg" > packages.txt && \
   #curl -L "https://github.com/vmware-tanzu/carvel-kbld/releases/download/v${KBLD_VERSION}/kbld-linux-amd64" -o ./tmp/kbld && \
