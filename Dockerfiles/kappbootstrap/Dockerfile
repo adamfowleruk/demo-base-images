@@ -35,26 +35,26 @@ ARG TANZUNET_PASSWORD
 # Download and verify before continuing
 # For KUBECTL find stable version here: https://dl.k8s.io/release/stable.txt 
 #   and its SHA here: https://dl.k8s.io/v1.23.4/bin/linux/amd64/kubectl.sha256
-RUN mkdir tmp \
-  #curl "https://github.com/vmware-tanzu/carvel-imgpkg/releases/download/v${IMGPKG_VERSION}/imgpkg-linux-amd64" -o ./tmp/imgpkg \
-  #echo "${IMGPKG_SHA256} ./tmp/imgpkg" > packages.txt \
-  #curl "https://github.com/vmware-tanzu/carvel-kbld/releases/download/v${KBLD_VERSION}/kbld-linux-amd64" -o ./tmp/kbld \
-  #echo "${KBLD_SHA256} ./tmp/kbld" >> packages.txt \
-  curl "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o ./tmp/kubectl \
-  echo "${KUBECTL_SHA256} ./tmp/kubectl" >> packages.txt \
-  curl "https://github.com/pivotal-cf/pivnet-cli/releases/download/v${PIVNET_CLI_VERSION}/pivnet-linux-amd64-${PIVNET_CLI_VERSION}" -o ./tmp/pivnet \
-  echo "${PIVNET_CLI_SHA256} ./tmp/pivnet" >> packages.txt \
+RUN mkdir tmp && \
+  #curl -L "https://github.com/vmware-tanzu/carvel-imgpkg/releases/download/v${IMGPKG_VERSION}/imgpkg-linux-amd64" -o ./tmp/imgpkg && \
+  #echo "${IMGPKG_SHA256} ./tmp/imgpkg" > packages.txt && \
+  #curl -L "https://github.com/vmware-tanzu/carvel-kbld/releases/download/v${KBLD_VERSION}/kbld-linux-amd64" -o ./tmp/kbld && \
+  #echo "${KBLD_SHA256} ./tmp/kbld" >> packages.txt && \
+  curl -L "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o ./tmp/kubectl && \
+  echo "${KUBECTL_SHA256} ./tmp/kubectl" >> packages.txt && \
+  curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v${PIVNET_CLI_VERSION}/pivnet-linux-amd64-${PIVNET_CLI_VERSION}" -o ./tmp/pivnet && \
+  echo "${PIVNET_CLI_SHA256} ./tmp/pivnet" >> packages.txt && \
   sha256sum --strict -c packages.txt
 
 # Install tools in the path
 RUN \
-  #cp ./tmp/imgpkg /usr/local/bin/imgpkg \
-  #cp ./tmp/kbld /usr/local/bin/kbld \
-  cp ./tmp/kubectl /usr/local/bin/kubectl \
-  cp ./tmp/pivnet /usr/local/bin/pivnet \
-  #chmod +x /usr/local/bin/imgpkg \
-  #chmod +x /usr/local/bin/kbld \
-  chmod +x /usr/local/bin/kubectl \
+  #cp ./tmp/imgpkg /usr/local/bin/imgpkg && \
+  #cp ./tmp/kbld /usr/local/bin/kbld && \
+  cp ./tmp/kubectl /usr/local/bin/kubectl && \
+  cp ./tmp/pivnet /usr/local/bin/pivnet && \
+  #chmod +x /usr/local/bin/imgpkg && \
+  #chmod +x /usr/local/bin/kbld && \
+  chmod +x /usr/local/bin/kubectl && \
   chmod +x /usr/local/bin/pivnet
 
 # Now fetch TANZU net artifacts and verify (we need the pivnet cli for this)
@@ -62,23 +62,23 @@ RUN \
   pivnet download-product-files --product-slug='tanzu-cluster-essentials' \
     --release-version="${CLUSTER_ESSENTIALS_VERSION}" \
     --product-file-id="${CLUSTER_ESSENTIALS_FILEID}" \
-    -d ./tmp \
-  mv ./tmp/tanzu-cluster-essentials-linux-amd64-${CLUSTER_ESSENTIALS_VERSION}.tgz ./tmp/essentials.tgz \
-  echo "${CLUSTER_ESSENTIALS_SHA256} ./tmp/essentials.tgz" > tanzunet.txt \
+  -d ./tmp && \
+  mv ./tmp/tanzu-cluster-essentials-linux-amd64-${CLUSTER_ESSENTIALS_VERSION}.tgz ./tmp/essentials.tgz && \
+  echo "${CLUSTER_ESSENTIALS_SHA256} ./tmp/essentials.tgz" > tanzunet.txt && \
   sha256sum --strict -c tanzunet.txt
 
 # Unpack cluster essentials and use it to fetch the required packages
 
 # Now use imgpkg to fetch the desired package of kapp-controller
 RUN imgpkg \
-  tar -xvf ./tmp/essentials.tgz -C ./tmp/tanzu-cluster-essentials \
-  cp ./tmp/tanzu-cluster-essentials/kapp /usr/local/bin/kapp \
-  cp ./tmp/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg \
-  export INSTALL_BUNDLE=registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:${CLUSTER_ESSENTIALS_BUNDLE_SHA256} \
-  export INSTALL_REGISTRY_HOSTNAME=registry.tanzu.vmware.com \
-  export INSTALL_REGISTRY_USERNAME=${TANZUNET_USERNAME} \
-  export INSTALL_REGISTRY_PASSWORD=${TANZUNET_PASSWORD} \
-  cd ./tmp/tanzu-cluster-essentials \
+  tar -xvf ./tmp/essentials.tgz -C ./tmp/tanzu-cluster-essentials && \
+  cp ./tmp/tanzu-cluster-essentials/kapp /usr/local/bin/kapp && \
+  cp ./tmp/tanzu-cluster-essentials/imgpkg /usr/local/bin/imgpkg && \
+  export INSTALL_BUNDLE=registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:${CLUSTER_ESSENTIALS_BUNDLE_SHA256} && \
+  export INSTALL_REGISTRY_HOSTNAME=registry.tanzu.vmware.com && \
+  export INSTALL_REGISTRY_USERNAME=${TANZUNET_USERNAME} && \
+  export INSTALL_REGISTRY_PASSWORD=${TANZUNET_PASSWORD} && \
+  cd ./tmp/tanzu-cluster-essentials && \
   # TODO do equivalent of install.sh BUT ONLY TO DOWNLOAD PACKAGES NOT TO INSTALL THEM
   #./install.sh 
   echo "DO SOMETHING"

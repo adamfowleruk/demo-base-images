@@ -1,0 +1,4 @@
+fileignoreconfig:
+- filename: Dockerfiles/kappbootstrap/Dockerfile
+  checksum: ec963dee7e5f177470e27ef9211d5afb45414c6d8d173bc6f1414ec72207928c
+version: ""
