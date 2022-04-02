@@ -34,6 +34,8 @@ ARG TANZUNET_USERNAME
 ARG TANZUNET_PASSWORD
 ARG PIVNET_TOKEN
 
+ENV PIVNET_TOKEN $PIVNET_TOKEN
+
 RUN apt-get update && \
   apt-get install -y --no-install-recommends ca-certificates curl && \
   apt-get clean
