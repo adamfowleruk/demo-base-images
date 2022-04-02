@@ -14,6 +14,7 @@ ARG CLUSTER_ESSENTIALS_SHA256=24613086760d5566f33e94307c0de5871c70d65f5ecf3b73af
 ARG CLUSTER_ESSENTIALS_BUNDLE_SHA256=82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
 ARG TANZUNET_USERNAME=
 ARG TANZUNET_PASSWORD=
+ARG PIVNET_TOKEN=
 
 # Phase 0 - Fetch and install CLI and imgpkg files for kapp-controller
 FROM $BUILD_IMAGE AS build
@@ -31,6 +32,7 @@ ARG CLUSTER_ESSENTIALS_SHA256
 ARG CLUSTER_ESSENTIALS_BUNDLE_SHA256
 ARG TANZUNET_USERNAME
 ARG TANZUNET_PASSWORD
+ARG PIVNET_TOKEN
 
 RUN apt-get update && \
   apt-get install -y --no-install-recommends ca-certificates curl && \
@@ -63,6 +65,7 @@ RUN \
 
 # Now fetch TANZU net artifacts and verify (we need the pivnet cli for this)
 RUN \
+  pivnet login --api-token="$PIVNET_TOKEN" && \
   pivnet download-product-files --product-slug='tanzu-cluster-essentials' \
     --release-version="${CLUSTER_ESSENTIALS_VERSION}" \
     --product-file-id="${CLUSTER_ESSENTIALS_FILEID}" \
