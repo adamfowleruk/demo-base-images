@@ -44,10 +44,10 @@ RUN apt-get update && \
 # For KUBECTL find stable version here: https://dl.k8s.io/release/stable.txt 
 #   and its SHA here: https://dl.k8s.io/v1.23.4/bin/linux/amd64/kubectl.sha256
 RUN mkdir -p tmp && \
-  #curl -L "https://github.com/vmware-tanzu/carvel-imgpkg/releases/download/v${IMGPKG_VERSION}/imgpkg-linux-amd64" -o ./tmp/imgpkg && \
-  #echo "${IMGPKG_SHA256} ./tmp/imgpkg" > packages.txt && \
-  #curl -L "https://github.com/vmware-tanzu/carvel-kbld/releases/download/v${KBLD_VERSION}/kbld-linux-amd64" -o ./tmp/kbld && \
-  #echo "${KBLD_SHA256} ./tmp/kbld" >> packages.txt && \
+  curl -L "https://github.com/vmware-tanzu/carvel-imgpkg/releases/download/v${IMGPKG_VERSION}/imgpkg-linux-amd64" -o ./tmp/imgpkg && \
+  echo "${IMGPKG_SHA256} ./tmp/imgpkg" > packages.txt && \
+  curl -L "https://github.com/vmware-tanzu/carvel-kbld/releases/download/v${KBLD_VERSION}/kbld-linux-amd64" -o ./tmp/kbld && \
+  echo "${KBLD_SHA256} ./tmp/kbld" >> packages.txt && \
   curl -L "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o ./tmp/kubectl && \
   echo "${KUBECTL_SHA256} ./tmp/kubectl" >> packages.txt && \
   curl -L "https://github.com/pivotal-cf/pivnet-cli/releases/download/v${PIVNET_CLI_VERSION}/pivnet-linux-amd64-${PIVNET_CLI_VERSION}" -o ./tmp/pivnet && \
@@ -56,12 +56,12 @@ RUN mkdir -p tmp && \
 
 # Install tools in the path
 RUN \
-  #cp ./tmp/imgpkg /usr/local/bin/imgpkg && \
-  #cp ./tmp/kbld /usr/local/bin/kbld && \
+  cp ./tmp/imgpkg /usr/local/bin/imgpkg && \
+  cp ./tmp/kbld /usr/local/bin/kbld && \
   cp ./tmp/kubectl /usr/local/bin/kubectl && \
   cp ./tmp/pivnet /usr/local/bin/pivnet && \
-  #chmod +x /usr/local/bin/imgpkg && \
-  #chmod +x /usr/local/bin/kbld && \
+  chmod +x /usr/local/bin/imgpkg && \
+  chmod +x /usr/local/bin/kbld && \
   chmod +x /usr/local/bin/kubectl && \
   chmod +x /usr/local/bin/pivnet
 
