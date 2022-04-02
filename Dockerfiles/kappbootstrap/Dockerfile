@@ -32,6 +32,10 @@ ARG CLUSTER_ESSENTIALS_BUNDLE_SHA256
 ARG TANZUNET_USERNAME
 ARG TANZUNET_PASSWORD
 
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends curl && \
+  apt-get clean
+
 # Download and verify before continuing
 # For KUBECTL find stable version here: https://dl.k8s.io/release/stable.txt 
 #   and its SHA here: https://dl.k8s.io/v1.23.4/bin/linux/amd64/kubectl.sha256
