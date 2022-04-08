@@ -105,6 +105,9 @@ RUN \
   # Do equivalent of online parts of install.sh BUT ONLY TO DOWNLOAD PACKAGES NOT TO INSTALL THEM
   ./fetch-online.sh
 
+COPY Dockerfiles/kappbootstrap/install-offline.sh .
+RUN chmod +x install-offline.sh
+
 FROM $RUN_IMAGE as run
 # WARNING at container runtime you MUST provide these details:-
 # ENV INSTALL_REGISTRY_HOSTNAME
@@ -120,9 +123,7 @@ COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=build /usr/local/bin/ytt /usr/local/bin/ytt
 COPY --from=build /bundle .
 COPY --from=build /cebundle.tar .
-
-# Copy external install script
-COPY Dockerfiles/kappbootstrap/install-offline.sh .
+COPY --from=build /install-offline.sh .
 
 # Perform the install when this container is instantiated
 CMD ["sh", "-c", "/install-offline.sh"]
