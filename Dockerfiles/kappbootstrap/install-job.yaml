@@ -8,31 +8,139 @@ metadata:
   namespace: install-tanzu-cluster-essentials
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  name: modify-pods
-  namespace: install-tanzu-cluster-essentials
+  name: install-essentials-role
 rules:
   # TODO validate the below required
   - apiGroups: [""]
     resources:
+      - configmaps
+    verbs:
+      - "*"
+      # - update
+      # update is for configmaps in tanzu-cluster-essentials namespace
+      # - delete
+      # delete is for configmaps global for kapp-controller
+      # BUT other perms needed (* requested)
+  - apiGroups: [""]
+    resources:
       - pods
+      - replicasets
+      - services
+      - customresourcedefinitions
+      - namespaces
+      - secrets
+      - apiservices
+      - serviceaccounts
+    verbs:
+      - get
+      - watch
+      - list
+      - create
+      - update
+      # update used for namespaces
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
     verbs:
       - get
       - list
-      - delete
+      - create
+      - update
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups: ["data.packaging.carvel.dev"]
+    resources:
+      - packagemetadatas
+      - packagemetadatas/status
+      - packages
+      - packages/status
+    verbs:
+      - "*"
+  - apiGroups: ["packaging.carvel.dev"]
+    resources:
+      - packageinstalls
+      - packageinstalls/status
+      - packagerepositories
+      - packagerepositories/status
+    verbs:
+      - "*"
+  - apiGroups: ["internal.packaging.carvel.dev"]
+    resources:
+      - internalpackagemetadatas
+      - internalpackages
+    verbs:
+      - "*"
+  - apiGroups: ["kappctrl.k14s.io"]
+    resources:
+      - apps
+      - apps/status
+    verbs:
+      - "*"
+  - apiGroups: ["apiregistration.k8s.io"]
+    resources:
+      - apiservices
+    verbs:
+      - get
+      - list
+      - create
+      - update
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources:
+      - customresourcedefinitions
+    # TODO restrict these to just ours
+    verbs:
+      - get
+      - list
+      - create
+      - update
+  - apiGroups: ["authorization.k8s.io"]
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - get
+      - list
+      - create
+  - apiGroups: ["authentication.k8s.io"]
+    resources:
+      - tokenreviews
+    verbs:
+      - get
+      - list
+      - create
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources:
+      - clusterroles
+      - clusterrolebindings
+      - rolebindings
+      - roles
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      # Used for Updating resource rolebinding/pkgserver-auth-reader (rbac.authorization.k8s.io/v1) namespace: kube-system: rolebindings.rbac.authorization.k8s.io "pkgserver-auth-reader" is forbidden:
+      # User "system:serviceaccount:install-tanzu-cluster-essentials:install-essentials" cannot update resource "rolebindings" in API group "rbac.authorization.k8s.io" in the namespace "kube-system"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: modify-pods-to-sa
-  namespace: install-tanzu-cluster-essentials
 subjects:
   - kind: ServiceAccount
     name: install-essentials
+    namespace: install-tanzu-cluster-essentials
 roleRef:
-  kind: Role
-  name: modify-pods
+  kind: ClusterRole
+  name: install-essentials-role
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: batch/v1
@@ -65,4 +173,4 @@ spec:
               name: my-k8s-admin-secret
               key: password
       restartPolicy: Never
-  backoffLimit: 4
+  backoffLimit: 0

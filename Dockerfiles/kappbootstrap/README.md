@@ -22,9 +22,10 @@ Note from the above that this container itself shouldn't need root permissions.
 
 ## Status
 
-- 02 Apr 2022 - Base image building with all tools and bundle included.
-  NOTE: Bundle DOES NOT include the two container images required, just the config
-  and a pointer to them in ./bundle/.imgpkg/images.yml
-- Have downloaded them to ./cebundle.tar using imgpkg copy
-- Need to upload them to target container registry
-- BUT also need to rewrite the images.yml above so they are located now in the correct place
+- 08 Apr 2022 - Download and package working. Install almost working - just debugging occasional 'missing role' issue
+- 08 Apr 2022 - Note: kbld/imgpkg IS NOT rewriting the images.yml file for the new repo - causing pull rate issues
+
+## Troubleshooting
+
+If you hit issues removing and retrying an install, see the contents of utils/ especially delete.sh
+
