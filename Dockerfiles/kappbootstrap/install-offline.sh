@@ -6,7 +6,8 @@ set -e -o pipefail
 
 ns_name=tanzu-cluster-essentials
 echo "## Creating namespace $ns_name"
-kubectl create ns $ns_name 2>/dev/null || true
+kubectl create ns $ns_name
+# 2>/dev/null || true
 
 echo "Using target registry hostname: $INSTALL_REGISTRY_HOSTNAME"
 
