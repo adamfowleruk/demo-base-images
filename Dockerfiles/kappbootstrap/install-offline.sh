@@ -26,6 +26,7 @@ export YTT_registry__server=$INSTALL_REGISTRY_HOSTNAME
 export YTT_registry__username=$INSTALL_REGISTRY_USERNAME
 export YTT_registry__password=$INSTALL_REGISTRY_PASSWORD
 
+tree ./
 echo "## Deploying kapp-controller"
 ytt --debug -f ./bundle/kapp-controller/config/ -f ./bundle/registry-creds/ --data-values-env YTT --data-value-yaml kappController.deployment.concurrency=10 \
 	| kbld -f- -f ./bundle/.imgpkg/images.yml \
