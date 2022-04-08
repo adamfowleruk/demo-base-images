@@ -117,6 +117,7 @@ FROM $RUN_IMAGE as run
 
 # This line is needed if the latest public PKI certs are required:-
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
+# TODO determine how to copy in any private ca-certs via parameter (E.g. kube ca cert secret)
 
 # Copy over relevant TAR paths and CLI from the base image
 COPY --from=build /install-offline.sh .
