@@ -47,6 +47,7 @@ spec:
       containers:
       - name: install-tanzu-cluster-essentials
         # EDIT THE BELOW FOR YOUR ENV FOR WHERE THIS CONTAINER RESIDES
+        # Note: You should use the SHA instead of a tag. Below is for convenience.
         image: your.harbor.registry/projectname/image:v1
         imagePullPolicy: Always
         env:

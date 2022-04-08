@@ -115,7 +115,11 @@ FROM $RUN_IMAGE as run
 # ENV INSTALL_REGISTRY_PASSWORD
 # DO NOT HARDCODE THEM HERE
 
+# This line is needed if the latest public PKI certs are required:-
+COPY --from=build /etc/ssl/certs /etc/ssl/certs
+
 # Copy over relevant TAR paths and CLI from the base image
+COPY --from=build /install-offline.sh .
 COPY --from=build /usr/local/bin/imgpkg /usr/local/bin/imgpkg
 COPY --from=build /usr/local/bin/kbld /usr/local/bin/kbld
 COPY --from=build /usr/local/bin/kapp /usr/local/bin/kapp
@@ -123,7 +127,6 @@ COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=build /usr/local/bin/ytt /usr/local/bin/ytt
 COPY --from=build /bundle .
 COPY --from=build /cebundle.tar .
-COPY --from=build /install-offline.sh .
 
 # Perform the install when this container is instantiated
 CMD ["sh", "-c", "/install-offline.sh"]
