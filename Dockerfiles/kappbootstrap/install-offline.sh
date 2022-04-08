@@ -17,7 +17,7 @@ echo "Using target registry hostname: $INSTALL_REGISTRY_HOSTNAME"
 export IMGPKG_REGISTRY_HOSTNAME_0=$INSTALL_REGISTRY_HOSTNAME
 export IMGPKG_REGISTRY_USERNAME_0=$INSTALL_REGISTRY_USERNAME
 export IMGPKG_REGISTRY_PASSWORD_0=$INSTALL_REGISTRY_PASSWORD
-imgpkg --debug copy --tar ./cebundle.tar --to-repo $INSTALL_REGISTRY_HOSTNAME
+imgpkg --debug copy --tar ./cebundle.tar --to-repo $INSTALL_REGISTRY_HOSTNAME/cluster-essentials-bundle
 
 # TODO rewrite images.yml here with location of the new server (if needed?)
 
