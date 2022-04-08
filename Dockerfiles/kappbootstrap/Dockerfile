@@ -125,4 +125,4 @@ COPY --from=build /cebundle.tar .
 COPY Dockerfiles/kappbootstrap/install-offline.sh .
 
 # Perform the install when this container is instantiated
-CMD ["sh", "-c", "install-offline.sh"]
+CMD ["sh", "-c", "/install-offline.sh"]

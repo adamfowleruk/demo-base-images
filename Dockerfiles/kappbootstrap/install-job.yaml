@@ -46,12 +46,12 @@ spec:
       serviceAccountName: install-essentials
       containers:
       - name: install-tanzu-cluster-essentials
-        # EDIT THE BELOW FOR YOUR ENV
+        # EDIT THE BELOW FOR YOUR ENV FOR WHERE THIS CONTAINER RESIDES
         image: your.harbor.registry/projectname/image:v1
         imagePullPolicy: Always
         env:
         - name: INSTALL_REGISTRY_HOSTNAME
-          # EDIT THE BELOW FOR YOUR ENV
+          # EDIT THE BELOW FOR YOUR ENV FOR THE TARGET HARBOR REPO
           value: "harbor.shared.12factor.xyz"
         - name: INSTALL_REGISTRY_USERNAME
           valueFrom:
