@@ -126,7 +126,7 @@ COPY --from=build /usr/local/bin/kbld /usr/local/bin/kbld
 COPY --from=build /usr/local/bin/kapp /usr/local/bin/kapp
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=build /usr/local/bin/ytt /usr/local/bin/ytt
-COPY --from=build /bundle .
+COPY --from=build /bundle /bundle
 COPY --from=build /cebundle.tar .
 
 # Perform the install when this container is instantiated
